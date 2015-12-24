@@ -100,11 +100,13 @@ app.get('/newsletter', function(req, res){
   res.render('newsletter', {csrf: 'CSRF token goes here'});
 });
 app.post('/process', function(req, res){
-  console.log('Form (from querystring): ' + req.query.form);
-  console.log('CSRF token (from hidden form field): ' + req.body._csrf);
-  console.log('Name (from visible form field): ' + req.body.name);
-  console.log('Email (from visible form field): ' + req.body.email);
-  res.redirect(303, '/thank-you');
+  if (req.xhr || req.accepts('json,html') === 'json'){
+    // if there was an error, we would send { error: 'error description'}
+    res.send({ success: true});
+  } else {
+    // if there was an error, we would redirect to an error page
+    res.redirect(303, '/thank-you');
+  }
 });
 app.get('/thank-you', function(req, res){
   res.render('thank-you');
